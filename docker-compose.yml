@@ -1,0 +1,24 @@
+httpd:
+  image: httpd
+  ports:
+    - "8080:80"
+
+tls:
+  image: pataquets/nginx-tls-proxy
+  links:
+    - httpd:backend
+  ports:
+    - "80:80"
+    - "8443:443"
+  volumes:
+    - /etc/ssl/:/etc/ssl:ro
+
+xinetd:
+#  image: pataquets/xinetd-tls
+  build: .
+  command: -d
+  tty: yes
+  ports:
+    - "443:443"
+  links:
+    - tls
